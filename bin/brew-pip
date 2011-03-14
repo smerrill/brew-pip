@@ -1,0 +1,58 @@
+#!/usr/bin/env python
+
+import os
+import sys
+import tempfile
+import xmlrpclib
+
+argv = sys.argv
+if len(argv) < 2:
+    sys.stderr.write("Please specify a package name (e.g. brew pip <name>)\n")
+    exit(1)
+
+client = xmlrpclib.ServerProxy('http://pypi.python.org/pypi')
+
+releases = client.package_releases(argv[1])
+
+if len(releases) == 0:
+    sys.stderr.write("Could not find a valid package '%s'\n" % argv[1])
+    exit(1)
+
+version = releases[0]
+data    = client.release_data(argv[1], version)
+name    = data['name'].lower()
+klass   = data['name'].capitalize()
+
+filename = "%s/%s.rb" % (tempfile.gettempdir(), name)
+f = open(filename, 'w')
+
+data = """
+require 'formula'
+
+class PipFormula < Formula
+  class NoopDownloadStrategy < AbstractDownloadStrategy
+    def fetch; end
+    def stage; end
+  end
+
+  def download_strategy
+    NoopDownloadStrategy
+  end
+
+  def install
+    system "pip", "install", "#{name}==#{version}",
+      "--install-option=--prefix=#{prefix}"
+  end
+end
+
+class %(klass)s < PipFormula
+  url "%(url)s"
+  homepage "%(homepage)s"
+end
+""" % {'klass': klass, 'url': data['download_url'], 'homepage': data['home_page']}
+
+f.write(data.strip()+"\n")
+f.close()
+
+os.system("brew install %s" % filename)
+os.remove(filename)
