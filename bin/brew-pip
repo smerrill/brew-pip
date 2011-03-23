@@ -28,15 +28,15 @@ if len(releases) == 0:
     sys.stderr.write("Could not find a valid package '%s'\n" % argv[1])
     exit(1)
 
-version = releases[0]
-data    = client.release_data(argv[1], version)
+main_release = releases[0]
+data    = client.release_data(argv[1], main_release)
 name    = data['name'].lower()
 klass   = data['name'].capitalize()
 
 filename = "%s/%s.rb" % (tempfile.gettempdir(), name)
 f = open(filename, 'w')
 
-data = """
+formula_contents = """
 require 'formula'
 
 class PipFormula < Formula
@@ -57,18 +57,19 @@ end
 
 class %(klass)s < PipFormula
   url "%(url)s"
+  version "%(version)s"
   homepage "%(homepage)s"
 end
-""" % {'klass': klass, 'url': data['download_url'], 'homepage': data['home_page']}
+""".strip() % {'klass': klass, 'url': data['download_url'], 'homepage': data['home_page'], 'version': data['version']}
 
-f.write(data.strip()+"\n")
+f.write(formula_contents+"\n")
 f.close()
 
 verbose_switch = ""
 if verbose:
     verbose_switch = "-v"
     print "Formula is:"
-    print data
+    print formula_contents
 
 
 os.system("brew install %s %s" % (verbose_switch, filename))
