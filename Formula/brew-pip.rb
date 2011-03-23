@@ -1,9 +1,9 @@
 require 'formula'
 
 class BrewPip < Formula
-  url 'https://github.com/josh/brew-pip/tarball/v0.1.0'
+  url 'https://github.com/josh/brew-pip/tarball/v0.1.1'
   homepage 'https://github.com/josh/brew-pip'
-  md5 '1bd7fbf7deccf6775a2182d60e47e5fa'
+  md5 '2c4b16e9129ab436a3db9cc3ce32b187'
 
   def install
     bin.install 'bin/brew-pip'
