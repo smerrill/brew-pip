@@ -10,6 +10,16 @@ if len(argv) < 2:
     sys.stderr.write("Please specify a package name (e.g. brew pip <name>)\n")
     exit(1)
 
+
+verbose = False
+if "-v" in argv:
+    argv.remove("-v")
+    verbose = True
+elif "--version" in argv:
+    argv.remove("--version")
+    verbose = True
+
+
 client = xmlrpclib.ServerProxy('http://pypi.python.org/pypi')
 
 releases = client.package_releases(argv[1])
@@ -54,5 +64,12 @@ end
 f.write(data.strip()+"\n")
 f.close()
 
-os.system("brew install %s" % filename)
+verbose_switch = ""
+if verbose:
+    verbose_switch = "-v"
+    print "Formula is:"
+    print data
+
+
+os.system("brew install %s %s" % (verbose_switch, filename))
 os.remove(filename)
