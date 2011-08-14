@@ -6,7 +6,7 @@ brew-pip -- install pip packages as homebrew formulas
 Install
 -------
 
-    brew install https://github.com/josh/brew-pip/raw/master/Formula/brew-pip.rb
+    brew install brew-pip
 
 Usage
 -----
