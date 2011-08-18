@@ -13,6 +13,15 @@ Usage
 
     brew pip Mercurial
 
+Setup
+-----
+
+After you install some pip packages, you will need to add Homebrew's pip path to your PYTHONPATH.
+
+You can add something like the following to your ~/.bash_profile:
+
+    export PYTHONPATH=$(brew --prefix)/lib/python2.7/site-packages
+
 See Also
 --------
 
