@@ -4,6 +4,7 @@ import os
 import sys
 import tempfile
 import xmlrpclib
+import re
 
 argv = sys.argv
 if len(argv) < 2:
@@ -31,7 +32,7 @@ if len(releases) == 0:
 main_release = releases[0]
 data    = client.release_data(argv[1], main_release)
 name    = data['name'].lower()
-klass   = "".join(map(str.capitalize, data['name'].split('-')))
+klass   = "".join(map(str.capitalize, re.findall('[a-zA-Z]+', data['name'])))
 
 filename = "%s/%s.rb" % (tempfile.gettempdir(), name)
 f = open(filename, 'w')
