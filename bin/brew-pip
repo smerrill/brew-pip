@@ -31,7 +31,7 @@ if len(releases) == 0:
 main_release = releases[0]
 data    = client.release_data(argv[1], main_release)
 name    = data['name'].lower()
-klass   = data['name'].capitalize()
+klass   = "".join(map(str.capitalize, data['name'].split('-')))
 
 filename = "%s/%s.rb" % (tempfile.gettempdir(), name)
 f = open(filename, 'w')
